@@ -7,10 +7,12 @@
 
 import SwiftUI
 
-
+/// Details View of a specific Dessert, displays name, instructions and ingredients
 struct DessertDetailsView: View {
     @State var dessertID : String
     @StateObject var recipeViewModel = RecipeViewModel()
+    
+    // MARK: - View
     
     var body: some View {
         VStack {

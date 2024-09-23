@@ -7,8 +7,11 @@
 
 import SwiftUI
 
+/// Intial View of the app, displays list of desserts by name
 struct DessertView: View {
     @StateObject var recipeViewModel = RecipeViewModel()
+    
+    // MARK: - View
     
     var body: some View {
         NavigationStack() {

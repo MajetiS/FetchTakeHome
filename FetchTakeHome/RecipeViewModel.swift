@@ -9,19 +9,30 @@
 import Foundation
 import SwiftUI
 
+/// enum to store urls for ease of modification
+enum URLStrings: String {
+    case urlDessert = "https://themealdb.com/api/json/v1/1/filter.php?c=Dessert"
+    case urlDetails = "https://themealdb.com/api/json/v1/1/lookup.php?i="
+}
+
+
+/// ViewModel used to fetch data from specific urls to display desserts and their corrosponding details
 class RecipeViewModel: ObservableObject {
     @Published var desserts: [Dessert] = []
     @Published var dessertDetails: DessertDetails = DessertDetails()
     
+    /// used to display ProgressView as data is loading
     @State var isLoading = false
-    @State var errorMessage: String?
     
-    private let urlDessert = "https://themealdb.com/api/json/v1/1/filter.php?c=Dessert"
-    private let urlDetails = "https://themealdb.com/api/json/v1/1/lookup.php?i="
+    private let urlDessert = URLStrings.urlDessert.rawValue
+    private let urlDetails = URLStrings.urlDetails.rawValue
+    
+    // MARK: - Fetch Data
 
+    /// function to fetch list of desserts and update RecipeViewModel.desserts
     func fetchDesserts() {
         guard let url = URL(string: urlDessert) else {
-            self.errorMessage = "Invalid URL."
+            print("Invalid URL.")
             return
         }
         
@@ -47,15 +58,15 @@ class RecipeViewModel: ObservableObject {
                     self.desserts = decodedResponse.meals.sorted(by: { $0.name < $1.name })
                 }
             } else {
-                self.errorMessage = "Failed to decode JSON: \(String(describing: error?.localizedDescription))"
+                print("Failed to decode JSON: \(String(describing: error?.localizedDescription))")
             }
         }.resume()
     }
     
-    
+    /// function to fetch DessertDetails for corresponding dessert by dessertID and update RecipeViewModel.dessertDetails
     func fetchDetails(dessertID: String) {
         guard let url = URL(string: urlDetails + dessertID) else {
-            self.errorMessage = "Invalid URL."
+            print("Invalid URL.")
             return
         }
         
@@ -82,7 +93,7 @@ class RecipeViewModel: ObservableObject {
                     self.dessertDetails = mealResponse.meals.first ?? DessertDetails()
                 }
             } catch {
-                print("Error decoding JSON: \(error)")
+                print("Error decoding JSON: \(String(describing: error.localizedDescription))")
             }
         }.resume()
     }
